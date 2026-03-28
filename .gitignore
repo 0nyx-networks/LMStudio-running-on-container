@@ -1,0 +1,10 @@
+/.devcontainer
+
+# VSCode specific
+*.code-workspace
+/.vscode
+
+models/**
+
+# Environment variables file
+.env

@@ -1,0 +1,31 @@
+# syntax=docker/dockerfile:1
+FROM docker.io/ubuntu:24.04
+ENV WORKSPACE="/workspace"
+
+# ------------------------------------------------------------
+# 基本パッケージ
+# ------------------------------------------------------------
+RUN set -eux \
+    && apt-get update \
+    && apt-get full-upgrade -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends curl ca-certificates bash libatomic1 libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# ------------------------------------------------------------
+# lms CLI のインストール
+# ------------------------------------------------------------
+RUN set -eux \
+    && curl -fsSL https://lmstudio.ai/install.sh | bash
+
+ENV PATH="/root/.lmstudio/bin:$PATH"
+VOLUME ["/workspace/lmstduio/models"]
+
+COPY . /container/
+
+RUN set -eux \
+    && chmod u+x /container/entrypoint.sh
+
+ENV LISTEN_PORT=1234
+EXPOSE ${LISTEN_PORT}
+
+CMD ["bash", "/container/entrypoint.sh"]
